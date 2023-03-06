@@ -44,7 +44,15 @@ public partial class Form1 : Form
                 this.Controls.Add(buttonGrid[row, col]);
             }
         }
-        
+        Button btnRestart = new Button();
+        btnRestart.Width = Convert.ToInt32(buttonSize * 0.7);
+        btnRestart.Height = Convert.ToInt32(buttonSize * 0.7);
+        btnRestart.Text = "Reload";
+        btnRestart.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        btnRestart.BackgroundImage = Image.FromFile("E:\\1\\jsegF14iwJs.jpg");
+        btnRestart.Location = new Point( 0 , 0); // задайте координаты расположения кнопки на форме
+        btnRestart.Click += new EventHandler(btnRestart_Click);
+        this.Controls.Add(btnRestart);
         
 
         // создаем массив для хранения текущего расположения квадратиков ( от 1 до 15 )
@@ -75,6 +83,27 @@ public partial class Form1 : Form
         UpdateButtons();
     }
    
+    private void btnRestart_Click(object sender, EventArgs e)
+    {
+        // перемешиваем квадратики в случайном порядке ( меняем расположение) 
+        Random rand = new Random();
+        for (int i = 0; i < 1000; i++)
+        {
+            int row1 = rand.Next(0, boardSize);
+            int col1 = rand.Next(0, boardSize);
+            int row2 = rand.Next(0, boardSize);
+            int col2 = rand.Next(0, boardSize);
+            int temp = gameBoard[row1, col1];
+            gameBoard[row1, col1] = gameBoard[row2, col2];
+            gameBoard[row2, col2] = temp;
+        }
+
+        moves = 0;
+        movesLabel.Text = "Moves: " + moves;
+
+        // обновляем кнопки
+        UpdateButtons();
+    }
     private void UpdateButtons() // 0 помещает как пустую кнопку
     {
         for (int row = 0; row < boardSize; row++)
