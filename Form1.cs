@@ -6,25 +6,32 @@ public partial class Form1 : Form
 {
     private const int boardSize = 4; // размер игрового поля
     private Button[,] buttonGrid; // массив кнопок для игрового поля
-    private int[,] gameBoard; // массив для хранения текущего расположения квадратиков
-    private Label count;
+    private int[,] gameBoard; // массив для хранения текущего расположения квадратиков (после перемешивания)
+    private Label movesLabel; // количество шагов
+    private int moves;  // количество шагов
     
+    //private System.Windows.Forms.Timer timer;
+    //private Label timerLabel;
+    //private int ForTimer;
+    
+    private int buttonSize;
     public Form1()
     {
-        
         InitializeComponent();
-        cfgForm();
+        //InitializeTimer();
+        ConfigForm();
         InitializeGame();
-        
     }
-    public void cfgForm()
+    public void ConfigForm()
     {
         this.Size = new Size(500, 600); 
     }
-    
+    /*public void InitializeTimer()
+    {
+    }*/
     private void InitializeGame()
     {
-        int buttonSize = 80; // размер кнопки
+        buttonSize = 80; // размер кнопки
         int topPadding = (this.ClientSize.Height - buttonSize * boardSize) / 2; // отступ сверху (зависит от размера кнопок)
         int leftPadding = (this.ClientSize.Width - buttonSize * boardSize) / 2; // отступ слева (зависит от размера кнопок)
         
@@ -44,9 +51,17 @@ public partial class Form1 : Form
                 this.Controls.Add(buttonGrid[row, col]);
             }
         }
+        
+        movesLabel = new Label();
+        movesLabel.Text = "Moves: 0";
+        movesLabel.AutoSize = true;
+        movesLabel.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        movesLabel.Location = new System.Drawing.Point(leftPadding, topPadding - 40);
+        this.Controls.Add(movesLabel);
+        
         Button btnRestart = new Button();
-        btnRestart.Width = Convert.ToInt32(buttonSize * 0.7);
-        btnRestart.Height = Convert.ToInt32(buttonSize * 0.7);
+        btnRestart.Width = Convert.ToInt32(buttonSize * 0.9);
+        btnRestart.Height = Convert.ToInt32(buttonSize * 0.9);
         btnRestart.Text = "Reload";
         btnRestart.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         btnRestart.BackgroundImage = Image.FromFile("E:\\1\\jsegF14iwJs.jpg");
@@ -54,7 +69,6 @@ public partial class Form1 : Form
         btnRestart.Click += new EventHandler(btnRestart_Click);
         this.Controls.Add(btnRestart);
         
-
         // создаем массив для хранения текущего расположения квадратиков ( от 1 до 15 )
         gameBoard = new int[boardSize, boardSize];
         for (int row = 0; row < boardSize; row++)
@@ -77,12 +91,10 @@ public partial class Form1 : Form
             int temp = gameBoard[row1, col1];
             gameBoard[row1, col1] = gameBoard[row2, col2];
             gameBoard[row2, col2] = temp;
+            
         }
-
-        // отображаем квадратики на кнопках
         UpdateButtons();
     }
-   
     private void btnRestart_Click(object sender, EventArgs e)
     {
         // перемешиваем квадратики в случайном порядке ( меняем расположение) 
@@ -100,8 +112,7 @@ public partial class Form1 : Form
 
         moves = 0;
         movesLabel.Text = "Moves: " + moves;
-
-        // обновляем кнопки
+        
         UpdateButtons();
     }
     private void UpdateButtons() // 0 помещает как пустую кнопку
@@ -175,7 +186,8 @@ public partial class Form1 : Form
             gameBoard[row, col] = gameBoard[emptyRow, emptyCol];
             gameBoard[emptyRow, emptyCol] = temp;
             
-            
+            moves++;
+            movesLabel.Text = "Moves: " + moves;
 
             // отображаем изменения на кнопках
             UpdateButtons();
